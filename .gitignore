@@ -1,0 +1,9 @@
+# Terraform binaries and state
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+
+# OS files
+.DS_Store
+Thumbs.db
