@@ -96,3 +96,33 @@ resource "aws_s3_bucket_public_access_block" "chaos" {
   ignore_public_acls      = false
   restrict_public_buckets = false
 }
+
+# CHAOS INJECT: Hardcoded credentials (simulated secret leak)
+# aws_access_key = "AKIAIOSFODNN7EXAMPLE"
+# aws_secret_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+
+# CHAOS INJECT: Root account usage allowed
+resource "aws_iam_role" "chaos_role" {
+  name = "securepipe-chaos-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { AWS = "*" }
+    }]
+  })
+}
+
+# CHAOS INJECT: S3 bucket with no restrictions
+resource "aws_s3_bucket" "chaos" {
+  bucket = "securepipe-chaos-310544499318"
+}
+
+resource "aws_s3_bucket_public_access_block" "chaos" {
+  bucket                  = aws_s3_bucket.chaos.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
